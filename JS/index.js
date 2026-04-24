@@ -45,11 +45,11 @@ async function processExcel() {
             }
 
             // Nom du fichier : on utilise un ID ou l'index pour éviter les doublons
-            const fileName = `${matricule || i + 1}.svg`;
+            const fileName = `${matricule || i + 1}.png`;
             const filePath = path.join(OUTPUT_DIR, fileName);
 
             await QRCode.toFile(filePath, String(content), {
-                type: 'svg',
+                type: 'png',
                 width: 400,
                 margin: 2,
                 color: {
