@@ -26,14 +26,13 @@ async function processExcel() {
         const sheetName = workbook.SheetNames[0];
         const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-        console.log(`🚀 ${data.length} lignes détectées. Début de la génération SVG...`);
+        console.log(`🚀 ${data.length} lignes détectées. Début de la génération PNG...`);
 
         // 2. Boucle de génération
         for (let i = 0; i < data.length; i++) {
             const row = data[i];
             
             // Construction du contenu du QR Code
-            // Note: On ajoute une barre "|" pour séparer les infos et faciliter la lecture au scan
             const content = `${row[COL_NOM] || ''} ${row[COL_PRENOM] || ''} | ${row[COL_NIVEAU] || ''}-${row[COL_MENTION] || ''}`;
             const matricule = row[COL_MATRICULE] || `ID-${i + 1}`;
 
@@ -42,32 +41,27 @@ async function processExcel() {
                 continue;
             }
 
-            const fileName = `${matricule}.svg`;
+            // Extension modifiée en .png
+            const fileName = `${matricule}.png`;
             const filePath = path.join(OUTPUT_DIR, fileName);
 
-            // 3. Génération du SVG en tant que chaîne de caractères (String)
-            let svgString = await QRCode.toString(content, {
-                type: 'svg',
-                margin: 4, // Marge de sécurité pour garantir le scan sur smartphone
+            // 3. Génération directe en fichier PNG
+            // QRCode.toFile gère tout seul l'écriture sur le disque
+            await QRCode.toFile(filePath, content, {
+                type: 'png',
+                width: 1000, // Haute résolution (1000x1000 pixels) pour l'impression
+                margin: 4,   // Marge de sécurité (Quiet Zone) indispensable pour le scan mobile
                 color: {
                     dark: '#000000', // Carrés noirs
                     light: '#ffffff' // Fond blanc
                 }
             });
-
-            // 4. NETTOYAGE CRUCIAL POUR FIGMA
-            // On retire l'en-tête XML et le DOCTYPE qui bloquent l'importation via URL
-            // On ne garde que la balise <svg> et son contenu
-            const cleanSvg = svgString.substring(svgString.indexOf('<svg'));
-
-            // 5. Écriture du fichier sur le disque
-            fs.writeFileSync(filePath, cleanSvg);
             
-            if (i % 20 === 0 && i > 0) console.log(`... ${i} codes générés`);
+            if (i % 20 === 0 && i > 0) console.log(`... ${i} images PNG générées`);
         }
 
-        console.log(`\n✅ Terminé ! 200+ fichiers SVG nettoyés sont dans : ${OUTPUT_DIR}`);
-        console.log(`💡 Prochaine étape : Poussez ces fichiers sur GitHub et utilisez raw.githubusercontent.com dans Figma.`);
+        console.log(`\n✅ Terminé ! 200+ images PNG sont dans : ${OUTPUT_DIR}`);
+        console.log(`💡 Rappel : N'oubliez pas de mettre à jour vos liens dans Excel avec l'extension .png au lieu de .svg.`);
 
     } catch (error) {
         console.error('❌ Erreur lors du traitement :', error.message);
