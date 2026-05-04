@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // --- CONFIGURATION ---
-const EXCEL_FILE = 'liste_etudiants.xlsx';
+const EXCEL_FILE = 'liste_etudiants_v1.xlsx';
 const OUTPUT_DIR = './qr_etudiant';
 
 // Noms des colonnes dans votre fichier Excel
