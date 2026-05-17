@@ -4,16 +4,17 @@ const fs = require('fs');
 const path = require('path');
 
 // --- CONFIGURATION ---
-const EXCEL_FILE = 'liste_etudiants_v1.xlsx';
-const OUTPUT_DIR = './qr_etudiant';
+const EXCEL_FILE = 'liste_personnel.xlsx';
+const OUTPUT_DIR = './qr_personnel';
 
 // Noms des colonnes dans votre fichier Excel
 const COL_NOM = 'nom';
 const COL_PRENOM = 'prenoms';
-const COL_MATRICULE = 'matricule';
-const COL_NIVEAU = 'niveau';
-const COL_MENTION = 'mention';
-
+// const COL_MATRICULE = 'matricule';
+const COL_IM = 'im';
+// const COL_NIVEAU = 'niveau';
+// const COL_MENTION = 'mention';
+const COL_FONCTION = 'fonction';
 // Créer le dossier de sortie s'il n'existe pas
 if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR);
@@ -33,8 +34,8 @@ async function processExcel() {
             const row = data[i];
             
             // Construction du contenu du QR Code
-            const content = `${row[COL_NOM] || ''} ${row[COL_PRENOM] || ''} | ${row[COL_NIVEAU] || ''}-${row[COL_MENTION] || ''}`;
-            const matricule = row[COL_MATRICULE] || `ID-${i + 1}`;
+            const content = `${row[COL_NOM] || ''} ${row[COL_PRENOM] || ''} | ${row[COL_FONCTION] || ''}`;
+            const matricule = row[COL_IM] || `ID-${i + 1}`;
 
             if (!row[COL_NOM] && !row[COL_PRENOM]) {
                 console.warn(`⚠️ Ligne ${i + 2} ignorée (nom/prénom vides).`);
